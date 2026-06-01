@@ -1,380 +1,119 @@
-Create a world-class GitHub README for a repository named:
 
-# DHS-ML-Lab
-### Machine Learning, Explainable AI, and Reproducible Research for Demographic and Health Surveys (DHS)
+### Module Explanations
 
-This repository is a flagship open-source research infrastructure project focused on applying Machine Learning, Statistics, and Explainable AI to Demographic and Health Surveys (DHS) and other large-scale public health datasets.
-
-It is designed for:
-- Researchers in public health and epidemiology
-- Machine learning engineers
-- Graduate students and PhD applicants
-- Data scientists working in global health
-- Open-source contributors in AI for healthcare
-
-The repository should match the quality level of top-tier open-source ecosystems such as:
-- PapersWithCode
-- fast.ai
-- Hugging Face documentation projects
-- Google Research-style GitHub repositories
+| Module | Responsibility |
+|--------|----------------|
+| `data/` | Streaming, windowing, normalization, train/val/test split |
+| `models/` | All forecasting architectures + sktime wrappers |
+| `xai/` | Post-hoc and intrinsic explainability modules |
+| `evaluation/` | Metrics (sMAPE, MASE, CRPS), backtests, residual analysis |
+| `pipeline.py` | Single entry point for full reproducibility |
 
 ---
 
-# 🧠 Core Vision
+## 🔬 Core Machine Learning / Research Pipeline
 
-This is NOT a resource dump or PDF collection.
+ChronosX follows a strict, auditable ML pipeline suitable for academic and industrial research:
 
-It is a **living research ecosystem** that enables:
-
-- End-to-end DHS-based machine learning pipelines
-- Reproducible public health research workflows
-- Explainable AI for epidemiological modeling
-- Survey-weighted machine learning implementation
-- Benchmarking of ML models on DHS indicators
-- Research-to-publication replication studies
-
-The long-term goal is to make this repository a **global reference hub for DHS-based ML research**.
-
----
-
-# 📌 README STRUCTURE REQUIREMENTS
-
-## 1. Professional Header Section
-
-Include:
-- Repository name (centered, styled)
-- One-line mission statement
-- Short description of impact
-
-Add modern GitHub badges:
-- Stars
-- Forks
-- Contributors
-- Issues
-- License
-- Last Commit
-- Python
-- R
-- Jupyter
+| Step | Description |
+|------|-------------|
+| **Data Collection** | Supports `.csv`, `.parquet`, InfluxDB, and simulated data |
+| **Cleaning & Preprocessing** | Interpolation, anomaly capping, frequency alignment |
+| **Feature Engineering** | Rolling stats, fourier terms, lag features, categorical encoding |
+| **Model Development** | Hyperparameter search via Optuna, cross-validation |
+| **Model Evaluation** | sMAPE, MASE, QLIKE, Diebold-Mariano tests |
+| **Explainability (XAI)** | Global + local feature importance, temporal attention |
+| **Reproducibility Pipeline** | Fixed random seeds, Docker + Conda, MLflow logging |
 
 ---
 
-## 2. Navigation (Table of Contents)
+## 🤖 Machine Learning Models
 
-- Fully linked anchor-based TOC
-- Clean hierarchical structure
+### Classical ML Models
 
----
+| Model | Use Case | Strengths | Limitations |
+|-------|----------|-----------|--------------|
+| **XGBoost** | Tabular forecasting with lags | Fast, handles missing data, robust | No temporal inductive bias |
+| **LightGBM** | Large-scale, many features | GOSS + EFB, lower memory | Requires careful tuning |
+| **ARIMA/SARIMA** | Baseline univariate | Interpretable, small data | Fails on high-frequency, multivariate |
 
-## 3. Why DHS-ML-Lab?
+### Advanced ML Models
 
-Explain clearly:
-- What DHS (Demographic and Health Surveys) is
-- Why DHS is globally important in public health research
-- Why ML is transforming population health analytics
-- Why interpretability (Explainable AI) is essential in healthcare
-- Why reproducibility is a core scientific requirement
+| Model | Use Case | Strengths | Limitations |
+|-------|----------|-----------|--------------|
+| **Temporal Fusion Transformer (TFT)** | Interpretable forecasting | Attention + static covariates + quantiles | Computationally heavy |
+| **Informer** | Very long sequences | ProbSparse attention, low complexity | Less interpretable than TFT |
+| **N-BEATS** | Pure DL, no covariates | SOTA on M4, interpretable via stacks/blocks | Univariate only |
+| **DeepAR** | Probabilistic forecasting | Likelihood-based, good for sparse data | Needs many time series |
 
----
+### Deep Learning Models (PyTorch)
 
-## 4. Learning & Research Roadmap
-
-Design a structured progression:
-
-Beginner → Intermediate → Advanced → Researcher → PhD-Level
-
-For each level include:
-- Skills
-- Tools
-- Projects
-- Expected outcomes
+| Model | Type | Input Shape | Output |
+|-------|------|-------------|--------|
+| **Transformer** | Encoder-decoder | (batch, seq_len, n_features) | (batch, pred_len, n_targets) |
+| **LSTM + Attention** | RNN with context vector | (batch, seq_len, n_features) | (batch, pred_len, n_targets) |
+| **TCN** | Causal dilated conv | (batch, seq_len, n_features) | (batch, pred_len, n_targets) |
 
 ---
 
-## 5. Mathematics for Machine Learning
+## 🔍 Explainable AI (XAI)
 
-Subsections:
-- Linear Algebra
-- Calculus
-- Probability & Statistics
-- Optimization
+Interpretability is not an afterthought in ChronosX — it is enforced at every evaluation step.
 
-For each topic include:
-- Concept summary
-- Key use cases in DHS analytics
-- Recommended resources (book/course/paper)
-- Difficulty level
-- Link placeholders
+| Method | Scope | Output |
+|--------|-------|--------|
+| **SHAP (KernelExplainer)** | Global + local | Feature importance summary, waterfall plots |
+| **LIME (TabularExplainer)** | Local (single sample) | Linear surrogate explanations |
+| **Temporal Attention Maps** | Model-specific | Attention weights over input time steps |
+| **Integrated Gradients** | Deep models only | Per-feature, per-timestep attribution |
 
----
-
-## 6. Public Health & Epidemiology Foundations
-
-Subsections:
-- Epidemiology basics
-- Biostatistics
-- Survey sampling theory
-- Complex survey design (weights, clustering, stratification)
-- DHS methodology
-- Global health metrics
-
-Focus on ML relevance.
+**Why interpretability matters:**  
+In finance, medicine, and infrastructure monitoring, a black-box forecast is insufficient. Regulators and domain experts require *why* a prediction was made. ChronosX provides attribution at both the feature level and time-step level, enabling trust and debugging.
 
 ---
 
-## 7. DHS Data Science Pipeline (Core Section)
+## 📚 Research Papers & Related Work
 
-Provide a full end-to-end pipeline:
+### Foundational Papers
 
-DHS Raw Data  
-→ Cleaning  
-→ Missing Data Handling  
-→ Feature Engineering  
-→ Survey Weight Adjustment  
-→ Class Imbalance Handling  
-→ Machine Learning Models  
-→ Model Evaluation  
-→ Explainable AI  
-→ Publication-ready Visualizations  
-→ Research Paper Output  
+- **Temporal Fusion Transformer** – Lim, B., et al. (2021). *Temporal Fusion Transformers for interpretable multi-horizon time series forecasting.* International Journal of Forecasting.
+- **Informer** – Zhou, H., et al. (2021). *Informer: Beyond efficient transformer for long sequence time-series forecasting.* AAAI.
+- **N-BEATS** – Oreshkin, B. N., et al. (2020). *N-BEATS: Neural basis expansion analysis for interpretable time series forecasting.* ICLR.
+- **DeepAR** – Salinas, D., et al. (2020). *DeepAR: Probabilistic forecasting with autoregressive recurrent networks.* International Journal of Forecasting.
 
-Explain why each step matters for public health datasets.
+### Modern Research (2022–2025)
 
----
+- **PatchTST** – Nie, Y., et al. (2023). *A time series is worth 64 words: Long-term forecasting with transformers.* ICLR.
+- **TimeX** – Zheng, X., et al. (2024). *Learning temporal representations with learnable positional encoding.* NeurIPS TS Workshop.
+- **SHAP for Time Series** – Bento, J., et al. (2022). *TimeSHAP: Explaining recurrent models through sequence perturbations.* XAI in Time Series workshop.
 
-## 8. Machine Learning for DHS
+### Related Repositories
 
-### Traditional Models
-- Logistic Regression
-- Decision Trees
-- Random Forest
-- Gradient Boosting (XGBoost, LightGBM, CatBoost)
-- Elastic Net
+- `tsai` – Fastai-based time series deep learning
+- `darts` – User-friendly forecasting library
+- `sktime` – Unified API for classical + ML models
 
-### Advanced Models
-- Neural Networks
-- TabNet
-- AutoML systems
-- Bayesian models
-
-For each model include:
-- Intuition
-- DHS use cases
-- Strengths & limitations
-- Interpretability relevance
-- Link placeholder
+ChronosX distinguishes itself via **tight integration of TFT, SHAP, and reproducibility-first design** — not just a model zoo.
 
 ---
 
-## 9. Explainable AI in Public Health
+## 📂 Dataset Section
 
-Subsections:
-- SHAP
-- LIME
-- Partial Dependence Plots (PDP)
-- ICE Plots
-- Counterfactual explanations
+### Primary Supported Datasets
 
-Include:
-- Theory intuition
-- Healthcare interpretation examples
-- DHS-specific case studies
+| Dataset | Domain | Samples | Freq | Target Variables |
+|---------|--------|---------|------|------------------|
+| **ETT (Electricity Transformer)** | Energy | 2 years | 15min/1h | Oil temperature |
+| **Electricity (UCI)** | Energy | 321 clients | 1h | Consumption (kWh) |
+| **Traffic (PeMS)** | Transportation | 862 sensors | 1h | Occupancy rate |
+| **Weather (Jena)** | Climate | ~10 years | 10min | Temperature, pressure, etc. |
 
----
+### Dataset Structure (after preprocessing)
 
-## 10. Survey-Weighted Machine Learning (Critical Section)
-
-Explain deeply:
-- DHS sampling weights
-- Stratification
-- Clustering effects
-- Why standard ML fails on survey data
-- Correct approaches for ML with survey data
-
-Include:
-- Best practices
-- Common mistakes
-- Research references
-
----
-
-## 11. Reproducible Research Framework
-
-Include:
-- Reproducible ML pipelines
-- Jupyter notebook standards
-- Version control practices
-- GitHub Actions (automation ideas)
-- Experiment tracking
-- Data documentation standards
-- Research transparency principles
-
----
-
-## 12. DHS Case Studies (Core Research Section)
-
-### Maternal Health
-- Antenatal care utilization
-- Institutional delivery
-- Cesarean section prediction
-
-### Child Health
-- Stunting
-- Wasting
-- Underweight
-
-### Women’s Health
-- Anemia
-- IPV (Intimate Partner Violence)
-- Reproductive health indicators
-
-### Mental Health (if applicable datasets exist)
-- Depression
-- Anxiety
-
-### Environmental Health
-- WASH indicators
-- Fuel use exposure
-- Environmental risk factors
-
-For each case study include:
-- Research question
-- Dataset description
-- ML methods
-- Explainability results
-- Reproducible notebook link
-
----
-
-## 13. Reproducing Published Papers (Flagship Feature)
-
-Section title:
-### “From Research Paper to Reproducible ML Pipeline”
-
-For each paper:
-- Citation
-- Dataset (DHS wave/country)
-- Methodology breakdown
-- Reproduction code
-- Improved ML pipeline (if any)
-- Explainability analysis
-
-Goal:
-Demonstrate scientific replication ability.
-
----
-
-## 14. Research Papers Library
-
-Organize:
-- Foundational ML papers
-- Public health landmark studies
-- Explainable AI papers
-- DHS-based ML research
-- Recent high-impact papers
-
----
-
-## 15. Open Source Projects for Contribution
-
-Structure:
-- Beginner-friendly issues
-- Intermediate projects
-- Advanced research tasks
-
-Include:
-- Contribution ideas
-- Label system (“good first issue”, “research replication”)
-
----
-
-## 16. Datasets Section
-
-Include:
-- DHS (primary)
-- MICS
-- NHANES
-- BRFSS
-- Other global health datasets
-- Optional ML benchmark datasets
-
----
-
-## 17. PhD & Research Toolkit
-
-Include:
-- Research methodology
-- Scientific writing
-- Literature review strategies
-- Conference preparation
-- Journal selection
-- Grant writing basics
-- PhD application guidance
-
----
-
-## 18. Repository Architecture
-
-Show clean structure:
-
-DHS-ML-Lab/
-│
-├── tutorials/
-├── notebooks/
-├── models/
-├── explainable_ai/
-├── survey_ml/
-├── epidemiology/
-├── case_studies/
-├── papers/
-├── datasets/
-├── reproducibility/
-├── experiments/
-├── docs/
-└── roadmap/
-
----
-
-## 19. Contributing Guide
-
-Make it simple and scalable:
-- Add paper summaries
-- Add notebooks
-- Improve documentation
-- Reproduce studies
-- Submit PR via templates
-
-Include GitHub issue + PR workflow design.
-
----
-
-## 20. License
-
-MIT License
-
----
-
-## 21. Writing & Style Requirements
-
-- Professional academic tone
-- Clean, structured Markdown
-- High readability
-- Minimal but meaningful emojis
-- Tables where needed
-- Strong section hierarchy
-- Copy-paste ready README.md
-- Must feel like a **top-tier research infrastructure project**
-
----
-
-# 🎯 FINAL GOAL
-
-The final README should position DHS-ML-Lab as:
-
-> A global open-source research infrastructure for machine learning, explainable AI, and reproducible public health analytics using DHS data.
-
-It should be strong enough to impress:
-- PhD admission committees
-- Public health researchers
-- Machine learning engineers
-- Open-source maintainers
+```python
+Dataset(
+    x = torch.Tensor(n_samples, lookback, n_features),   # Input
+    y = torch.Tensor(n_samples, horizon, n_targets),     # Target
+    times = pd.DatetimeIndex(n_samples),                 # For seasonality
+    static = torch.Tensor(n_samples, n_static)          # Optional
+)
