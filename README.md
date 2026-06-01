@@ -24,6 +24,7 @@ NeuroForge is an open-source research framework for end-to-end machine learning 
 ## 📑 Table of Contents
 
 - [Why This Project Matters](#-why-this-project-matters)
+- [Quick-Start Repository Structure](#-quick-start-repository-structure)
 - [Project Architecture](#-project-architecture)
 - [Core ML Research Pipeline](#-core-ml-research-pipeline)
 - [Machine Learning Models](#-machine-learning-models)
@@ -58,6 +59,145 @@ The machine learning research ecosystem suffers from a well-documented reproduci
 **Industrial relevance:** The same pipeline used for research benchmarking is structured for production deployment with MLflow tracking, Docker containerization, and REST API exposure via FastAPI.
 
 **Ethical commitment:** All preprocessing steps and modeling decisions are documented with transparency about data provenance, model limitations, and potential for disparate impact.
+
+---
+
+## 🗂️ Quick-Start Repository Structure
+
+> **For researchers setting up a new project from scratch**, the simplest battle-tested layout is a lean three-folder structure. Everything else in this repository grows naturally from this foundation.
+
+### Minimal Starting Point
+
+```
+DHS-ML-Lab/
+│
+├── data/
+├── papers/
+├── code/
+└── README.md
+```
+
+This is the layout used by research groups at Harvard, Stanford, and the World Bank for applied ML projects — simple enough to onboard a collaborator in five minutes, structured enough to scale into a full research pipeline.
+
+---
+
+### 📊 `data/` — Dataset Storage
+
+Stores all versions of your dataset: raw, cleaned, and processed. Never modify raw files in place — treat them as immutable scientific records.
+
+```
+data/
+├── raw/
+│   └── dhs_raw.csv            # Original DHS survey data — never edited
+├── processed/
+│   └── dhs_clean.csv          # Cleaned, analysis-ready dataset
+└── README.md                  # Variable dictionary, source, access instructions
+```
+
+> **Important:** Large or sensitive DHS microdata files should **not** be committed to GitHub. Add them to `.gitignore` and document the access procedure in `data/README.md` instead. Use DVC (`dvc add data/raw/`) for versioned remote storage.
+
+```gitignore
+# .gitignore — protect sensitive or large data files
+data/raw/*.csv
+data/raw/*.dta
+data/raw/*.xlsx
+```
+
+---
+
+### 📚 `papers/` — Research Literature & Theory
+
+Centralises everything you read and cite. A co-author or reviewer can open this folder and immediately understand the theoretical grounding of your work.
+
+```
+papers/
+├── dhs_ml_review.pdf          # Primary methodological reference
+├── maternal_health_review.pdf # Domain literature
+├── references.bib             # BibTeX citation library (for LaTeX / Quarto)
+└── summary_notes.md           # Your own synthesis and critical notes
+```
+
+> Keep `references.bib` in sync with `summary_notes.md`. Annotated bibliographies in `summary_notes.md` are valuable for thesis writing and grant applications.
+
+---
+
+### 💻 `code/` — Reproducible ML Pipeline
+
+All executable research code lives here, organized by pipeline stage. Both Python and R are supported — use whichever is standard in your research community.
+
+```
+code/
+├── preprocessing.py           # Data cleaning, encoding, imputation
+├── train_model.py             # Model training with logged hyperparameters
+├── analysis.R                 # Statistical analysis (R ecosystem)
+├── notebook.ipynb             # Exploratory analysis and visualization
+└── utils.py                   # Shared helper functions
+```
+
+> Every script should be runnable with a single command and produce identical output across environments. Use `argparse` (Python) or `optparse` (R) for configurable entry points.
+
+---
+
+### 🚀 International-Level Research Structure (Full Expansion)
+
+Once your project matures beyond the minimal structure, expand as follows. This is the layout that maps directly to the sections of a published paper and satisfies open-science requirements at top journals.
+
+```
+DHS-ML-Lab/
+│
+├── data/
+│   ├── raw/                   # Immutable source files (.csv, .dta, .xlsx)
+│   └── processed/             # Model-ready, versioned output files
+│
+├── papers/
+│   ├── *.pdf                  # Literature corpus
+│   ├── references.bib         # Unified BibTeX library
+│   └── summary_notes.md       # Annotated bibliography
+│
+├── code/
+│   ├── preprocessing/         # Cleaning, imputation, encoding scripts
+│   ├── modeling/              # Training, hyperparameter search, ensembling
+│   └── evaluation/            # Metrics, calibration, XAI, significance tests
+│
+├── results/
+│   ├── figures/               # Publication-ready plots (PDF / SVG)
+│   └── tables/                # Formatted result tables (LaTeX / CSV)
+│
+├── docs/
+│   ├── data_dictionary.md     # Variable definitions and coding notes
+│   └── methodology.md         # Step-by-step pipeline documentation
+│
+└── README.md
+```
+
+**Why this structure signals research maturity:**
+
+| Folder | What reviewers & collaborators see |
+|---|---|
+| `data/raw/` | Respect for data provenance and immutability |
+| `papers/references.bib` | Grounded in the literature, citable |
+| `code/` (staged) | Pipeline is reproducible, not a one-file hack |
+| `results/figures/` | Ready for direct insertion into a manuscript |
+| `docs/` | Onboarding friction is low; collaboration is easy |
+
+---
+
+### ⚡ Creating These Folders on GitHub (No Local Setup Required)
+
+GitHub does not display empty folders, so create a placeholder file in each:
+
+1. Go to your repository → **Add file** → **Create new file**
+2. Type the path including a placeholder filename, for example:
+
+```
+data/README.md
+papers/README.md
+code/README.md
+results/.gitkeep
+docs/.gitkeep
+```
+
+3. Commit each file. The folders will appear immediately in the repository tree.
 
 ---
 
